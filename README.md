@@ -180,7 +180,7 @@ Content-Type: application/json
 
 {
   "title": "Updated Title",
-  "blocks": [...]  // Full blocks array - replaces existing
+  "blocks": []
 }
 ```
 
