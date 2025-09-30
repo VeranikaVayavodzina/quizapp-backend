@@ -17,7 +17,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? [process.env.FRONTEND_URL]
+        : ['http://localhost:3000', 'http://localhost:3001'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   });
@@ -28,13 +31,21 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   await app.listen(PORT);
-  Logger.log(
-    `Application is running on: http://localhost:${PORT}/${GLOBAL_PREFIX}`,
-    'Bootstrap',
-  );
-  Logger.log(
-    `Swagger documentation available at: http://localhost:${PORT}/docs`,
-    'Bootstrap',
-  );
+
+  if (process.env.NODE_ENV !== 'production') {
+    Logger.log(
+      `Application is running on: http://localhost:${PORT}/${GLOBAL_PREFIX}`,
+      'Bootstrap',
+    );
+    Logger.log(
+      `Swagger documentation available at: http://localhost:${PORT}/docs`,
+      'Bootstrap',
+    );
+  }
 }
-bootstrap();
+
+if (require.main === module) {
+  bootstrap();
+}
+
+export default bootstrap;
